@@ -76,7 +76,7 @@ async def parse_multipart_upload(
                 try:
                     provided_hash_exists = check_hash_exists(provided_hash)
                 except Exception as e:
-                    logging.error(
+                    logging.exception(
                         "check_hash_exists failed for hash=%s: %s", provided_hash, e
                     )
                     raise UploadError(
