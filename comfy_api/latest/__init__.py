@@ -25,6 +25,7 @@ class ComfyAPI_latest(ComfyAPIBase):
         super().__init__()
         self.node_replacement = self.NodeReplacement()
         self.execution = self.Execution()
+        self.caching = self.Caching()
 
     class NodeReplacement(ProxiedSingleton):
         async def register(self, node_replace: io.NodeReplace) -> None:
@@ -83,6 +84,20 @@ class ComfyAPI_latest(ComfyAPIBase):
                 max_value=max_value,
                 image=to_display,
             )
+
+    class Caching(ProxiedSingleton):
+        """External cache provider API for sharing cached node outputs."""
+        from ._caching import CacheProvider, CacheContext, CacheValue
+
+        async def register_provider(self, provider: "ComfyAPI_latest.Caching.CacheProvider") -> None:
+            """Register an external cache provider."""
+            from comfy_execution.cache_provider import register_cache_provider
+            register_cache_provider(provider)
+
+        async def unregister_provider(self, provider: "ComfyAPI_latest.Caching.CacheProvider") -> None:
+            """Unregister an external cache provider."""
+            from comfy_execution.cache_provider import unregister_cache_provider
+            unregister_cache_provider(provider)
 
 class ComfyExtension(ABC):
     async def on_load(self) -> None:
