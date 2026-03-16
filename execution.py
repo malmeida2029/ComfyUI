@@ -48,6 +48,45 @@ class ExecutionResult(Enum):
     FAILURE = 1
     PENDING = 2
 
+
+def _register_output_files_as_assets(output_ui):
+    import os
+
+    import folder_paths
+    from app.assets.services.ingest import register_file_in_place
+
+    for _key, items in output_ui.items():
+        if not isinstance(items, list):
+            continue
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            filename = item.get("filename")
+            subfolder = item.get("subfolder", "")
+            file_type = item.get("type", "output")
+            if not filename or file_type not in ("output", "input"):
+                continue
+            try:
+                if file_type == "input":
+                    base_dir = folder_paths.get_input_directory()
+                else:
+                    base_dir = folder_paths.get_output_directory()
+                abs_path = os.path.join(base_dir, subfolder, filename)
+                if not os.path.exists(abs_path):
+                    continue
+                register_file_in_place(
+                    abs_path=abs_path,
+                    name=filename,
+                    tags=[file_type],
+                )
+            except Exception:
+                logging.warning(
+                    "Failed to register output as asset: %s",
+                    filename,
+                    exc_info=True,
+                )
+
+
 class DuplicateNodeError(Exception):
     pass
 
@@ -540,6 +579,11 @@ async def execute(server, dynprompt, caches, current_item, extra_data, executed,
                 asyncio.create_task(await_completion())
                 return (ExecutionResult.PENDING, None, None)
         if len(output_ui) > 0:
+            if args.enable_assets:
+                try:
+                    _register_output_files_as_assets(output_ui)
+                except Exception:
+                    logging.warning("Asset registration failed", exc_info=True)
             ui_outputs[unique_id] = {
                 "meta": {
                     "node_id": unique_id,
