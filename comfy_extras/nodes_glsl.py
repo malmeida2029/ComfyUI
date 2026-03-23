@@ -35,9 +35,32 @@ def _preload_angle():
 _preload_angle()
 os.environ.setdefault("PYOPENGL_PLATFORM", "egl")
 
+import OpenGL
+OpenGL.USE_ACCELERATE = False
+
+
+def _patch_find_library():
+    """On Windows, PyOpenGL's EGL platform looks for 'EGL' and 'GLESv2' by
+    name via ctypes.util.find_library, but ANGLE ships as 'libEGL' and
+    'libGLESv2'.  Patch find_library to return the full ANGLE paths so
+    PyOpenGL loads the same DLLs we pre-loaded (same handle, no duplicates)."""
+    if sys.platform != "win32":
+        return
+    import ctypes.util
+    _orig = ctypes.util.find_library
+    def _patched(name):
+        if name == 'EGL':
+            return comfy_angle.get_egl_path()
+        if name == 'GLESv2':
+            return comfy_angle.get_glesv2_path()
+        return _orig(name)
+    ctypes.util.find_library = _patched
+
+
+_patch_find_library()
+
 from OpenGL import EGL
 from OpenGL import GLES3 as gl
-
 
 class SizeModeInput(TypedDict):
     size_mode: str
@@ -93,7 +116,7 @@ def _egl_attribs(*values):
 def _gl_str(name):
     """Get an OpenGL string parameter."""
     v = gl.glGetString(name)
-    if v is None:
+    if not v:
         return "Unknown"
     if isinstance(v, bytes):
         return v.decode(errors="replace")
@@ -136,10 +159,7 @@ class GLContext:
 
     def __init__(self):
         if GLContext._initialized:
-            logger.debug("GLContext.__init__: already initialized, skipping")
             return
-
-        logger.debug("GLContext.__init__: starting initialization")
 
         import time
         start = time.perf_counter()
@@ -251,8 +271,10 @@ def _compile_shader(source: str, shader_type: int) -> int:
     gl.glShaderSource(shader, source)
     gl.glCompileShader(shader)
 
-    if gl.glGetShaderiv(shader, gl.GL_COMPILE_STATUS) != gl.GL_TRUE:
-        error = gl.glGetShaderInfoLog(shader).decode()
+    if not gl.glGetShaderiv(shader, gl.GL_COMPILE_STATUS):
+        error = gl.glGetShaderInfoLog(shader)
+        if isinstance(error, bytes):
+            error = error.decode(errors="replace")
         gl.glDeleteShader(shader)
         raise RuntimeError(f"Shader compilation failed:\n{error}")
 
@@ -276,8 +298,10 @@ def _create_program(vertex_source: str, fragment_source: str) -> int:
     gl.glDeleteShader(vertex_shader)
     gl.glDeleteShader(fragment_shader)
 
-    if gl.glGetProgramiv(program, gl.GL_LINK_STATUS) != gl.GL_TRUE:
-        error = gl.glGetProgramInfoLog(program).decode()
+    if not gl.glGetProgramiv(program, gl.GL_LINK_STATUS):
+        error = gl.glGetProgramInfoLog(program)
+        if isinstance(error, bytes):
+            error = error.decode(errors="replace")
         gl.glDeleteProgram(program)
         raise RuntimeError(f"Program linking failed:\n{error}")
 
