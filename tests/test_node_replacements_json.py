@@ -44,8 +44,12 @@ def load_node_replacements_json(module_dir, module_name, manager, NodeReplace=Mo
             for entry in replacements:
                 if not isinstance(entry, dict):
                     continue
+                new_node_id = entry.get("new_node_id", "")
+                if not new_node_id:
+                    logging.warning(f"node_replacements.json in {module_name}: entry for '{old_node_id}' missing 'new_node_id', skipping.")
+                    continue
                 manager.register(NodeReplace(
-                    new_node_id=entry.get("new_node_id", ""),
+                    new_node_id=new_node_id,
                     old_node_id=entry.get("old_node_id", old_node_id),
                     old_widget_ids=entry.get("old_widget_ids"),
                     input_mapping=entry.get("input_mapping"),
@@ -202,6 +206,20 @@ class TestLoadNodeReplacementsJson(unittest.TestCase):
         self.assertEqual(len(registered.input_mapping), 2)
         self.assertEqual(registered.input_mapping[0]["set_value"], "lanczos")
         self.assertEqual(registered.input_mapping[1]["old_id"], "dimension")
+
+    def test_missing_new_node_id_skipped(self):
+        """Entry without new_node_id is skipped."""
+        self._write_json({
+            "OldNode": [
+                {"old_node_id": "OldNode"},
+                {"new_node_id": "", "old_node_id": "OldNode"},
+                {"new_node_id": "ValidNew", "old_node_id": "OldNode"},
+            ]
+        })
+        self._load()
+        self.assertEqual(self.mock_manager.register.call_count, 1)
+        registered = self.mock_manager.register.call_args[0][0]
+        self.assertEqual(registered.new_node_id, "ValidNew")
 
     def test_non_dict_entry_skipped(self):
         """Non-dict entries in the list are silently skipped."""

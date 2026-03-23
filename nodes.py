@@ -2233,8 +2233,12 @@ def load_node_replacements_json(module_dir: str, module_name: str):
             for entry in replacements:
                 if not isinstance(entry, dict):
                     continue
+                new_node_id = entry.get("new_node_id", "")
+                if not new_node_id:
+                    logging.warning(f"node_replacements.json in {module_name}: entry for '{old_node_id}' missing 'new_node_id', skipping.")
+                    continue
                 manager.register(NodeReplace(
-                    new_node_id=entry.get("new_node_id", ""),
+                    new_node_id=new_node_id,
                     old_node_id=entry.get("old_node_id", old_node_id),
                     old_widget_ids=entry.get("old_widget_ids"),
                     input_mapping=entry.get("input_mapping"),
@@ -2274,7 +2278,10 @@ async def load_custom_node(module_path: str, ignore=set(), module_parent="custom
 
         LOADED_MODULE_DIRS[module_name] = os.path.abspath(module_dir)
 
-        load_node_replacements_json(module_dir, module_name)
+        # Only load node_replacements.json from directory-based custom nodes (proper packs).
+        # Single-file .py nodes share a parent dir, so checking there would be incorrect.
+        if os.path.isdir(module_path):
+            load_node_replacements_json(module_dir, module_name)
 
         try:
             from comfy_config import config_parser
