@@ -2181,6 +2181,9 @@ EXTENSION_WEB_DIRS = {}
 # Dictionary of successfully loaded module names and associated directories.
 LOADED_MODULE_DIRS = {}
 
+# Dictionary of custom node startup errors, keyed by module name.
+NODE_STARTUP_ERRORS: dict[str, dict] = {}
+
 
 def get_module_name(module_path: str) -> str:
     """
@@ -2298,6 +2301,13 @@ async def load_custom_node(module_path: str, ignore=set(), module_parent="custom
     except Exception as e:
         logging.warning(traceback.format_exc())
         logging.warning(f"Cannot import {module_path} module for custom nodes: {e}")
+        module_name = get_module_name(module_path)
+        NODE_STARTUP_ERRORS[module_name] = {
+            "module_path": module_path,
+            "error": str(e),
+            "traceback": traceback.format_exc(),
+            "phase": "import",
+        }
         return False
 
 async def init_external_custom_nodes():

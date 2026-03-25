@@ -753,6 +753,10 @@ class PromptServer():
                 out[node_class] = node_info(node_class)
             return web.json_response(out)
 
+        @routes.get("/custom_node_startup_errors")
+        async def get_custom_node_startup_errors(request):
+            return web.json_response(nodes.NODE_STARTUP_ERRORS)
+
         @routes.get("/api/jobs")
         async def get_jobs(request):
             """List all jobs with filtering, sorting, and pagination.
