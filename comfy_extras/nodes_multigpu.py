@@ -1,13 +1,17 @@
 from __future__ import annotations
-from inspect import cleandoc
 
+from inspect import cleandoc
 from typing import TYPE_CHECKING
+from typing_extensions import override
+
+from comfy_api.latest import ComfyExtension, io
+
 if TYPE_CHECKING:
     from comfy.model_patcher import ModelPatcher
 import comfy.multigpu
 
 
-class MultiGPUWorkUnitsNode:
+class MultiGPUWorkUnitsNode(io.ComfyNode):
     """
     Prepares model to have sampling accelerated via splitting work units.
 
@@ -16,54 +20,53 @@ class MultiGPUWorkUnitsNode:
     Other than those exceptions, this node can be placed in any order.
     """
 
-    NodeId = "MultiGPU_WorkUnits"
-    NodeName = "MultiGPU Work Units"
     @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "model": ("MODEL",),
-                "max_gpus" : ("INT", {"default": 8, "min": 1, "step": 1}),
-            },
-            "optional": {
-                "gpu_options": ("GPU_OPTIONS",)
-            }
-        }
+    def define_schema(cls):
+        return io.Schema(
+            node_id="MultiGPU_WorkUnits",
+            display_name="MultiGPU Work Units",
+            category="advanced/multigpu",
+            description=cleandoc(cls.__doc__),
+            inputs=[
+                io.Model.Input("model"),
+                io.Int.Input("max_gpus", default=8, min=1, step=1),
+                io.Custom("GPU_OPTIONS").Input("gpu_options", optional=True),
+            ],
+            outputs=[
+                io.Model.Output(),
+            ],
+        )
 
-    RETURN_TYPES = ("MODEL",)
-    FUNCTION = "init_multigpu"
-    CATEGORY = "advanced/multigpu"
-    DESCRIPTION = cleandoc(__doc__)
-
-    def init_multigpu(self, model: ModelPatcher, max_gpus: int, gpu_options: comfy.multigpu.GPUOptionsGroup=None):
+    @classmethod
+    def execute(cls, model: ModelPatcher, max_gpus: int, gpu_options: comfy.multigpu.GPUOptionsGroup = None) -> io.NodeOutput:
         model = comfy.multigpu.create_multigpu_deepclones(model, max_gpus, gpu_options, reuse_loaded=True)
-        return (model,)
+        return io.NodeOutput(model)
 
-class MultiGPUOptionsNode:
+
+class MultiGPUOptionsNode(io.ComfyNode):
     """
     Select the relative speed of GPUs in the special case they have significantly different performance from one another.
     """
 
-    NodeId = "MultiGPU_Options"
-    NodeName = "MultiGPU Options"
     @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "device_index": ("INT", {"default": 0, "min": 0, "max": 64}),
-                "relative_speed": ("FLOAT", {"default": 1.0, "min": 0.0, "step": 0.01})
-            },
-            "optional": {
-                "gpu_options": ("GPU_OPTIONS",)
-            }
-        }
+    def define_schema(cls):
+        return io.Schema(
+            node_id="MultiGPU_Options",
+            display_name="MultiGPU Options",
+            category="advanced/multigpu",
+            description=cleandoc(cls.__doc__),
+            inputs=[
+                io.Int.Input("device_index", default=0, min=0, max=64),
+                io.Float.Input("relative_speed", default=1.0, min=0.0, step=0.01),
+                io.Custom("GPU_OPTIONS").Input("gpu_options", optional=True),
+            ],
+            outputs=[
+                io.Custom("GPU_OPTIONS").Output(),
+            ],
+        )
 
-    RETURN_TYPES = ("GPU_OPTIONS",)
-    FUNCTION = "create_gpu_options"
-    CATEGORY = "advanced/multigpu"
-    DESCRIPTION = cleandoc(__doc__)
-
-    def create_gpu_options(self, device_index: int, relative_speed: float, gpu_options: comfy.multigpu.GPUOptionsGroup=None):
+    @classmethod
+    def execute(cls, device_index: int, relative_speed: float, gpu_options: comfy.multigpu.GPUOptionsGroup = None) -> io.NodeOutput:
         if not gpu_options:
             gpu_options = comfy.multigpu.GPUOptionsGroup()
         gpu_options.clone()
@@ -71,16 +74,17 @@ class MultiGPUOptionsNode:
         opt = comfy.multigpu.GPUOptions(device_index=device_index, relative_speed=relative_speed)
         gpu_options.add(opt)
 
-        return (gpu_options,)
+        return io.NodeOutput(gpu_options)
 
 
-node_list = [
-    MultiGPUWorkUnitsNode,
-    MultiGPUOptionsNode
-]
-NODE_CLASS_MAPPINGS = {}
-NODE_DISPLAY_NAME_MAPPINGS = {}
+class MultiGPUExtension(ComfyExtension):
+    @override
+    async def get_node_list(self) -> list[type[io.ComfyNode]]:
+        return [
+            MultiGPUWorkUnitsNode,
+            MultiGPUOptionsNode,
+        ]
 
-for node in node_list:
-    NODE_CLASS_MAPPINGS[node.NodeId] = node
-    NODE_DISPLAY_NAME_MAPPINGS[node.NodeId] = node.NodeName
+
+async def comfy_entrypoint() -> MultiGPUExtension:
+    return MultiGPUExtension()
