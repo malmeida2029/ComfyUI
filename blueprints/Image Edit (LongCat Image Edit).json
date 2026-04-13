@@ -1,18 +1,18 @@
 {
   "revision": 0,
-  "last_node_id": 39,
+  "last_node_id": 176,
   "last_link_id": 0,
   "nodes": [
     {
-      "id": 39,
-      "type": "69b00ff6-08d6-407d-8083-2897974ee2a1",
+      "id": 176,
+      "type": "372a02a0-a79c-40b4-84a9-34f246fe0e9c",
       "pos": [
-        810,
-        1100
+        967.0861152473078,
+        4977.534165136897
       ],
       "size": [
-        400,
-        0
+        330,
+        380
       ],
       "flags": {},
       "order": 3,
@@ -120,13 +120,13 @@
             "vae_name"
           ]
         ],
+        "cnr_id": "comfy-core",
+        "ver": "0.18.1",
         "ue_properties": {
           "widget_ue_connectable": {},
           "version": "7.7",
           "input_ue_unconnectable": {}
-        },
-        "cnr_id": "comfy-core",
-        "ver": "0.18.1"
+        }
       },
       "widgets_values": [],
       "title": "Image Edit (LongCat Image Edit)"
@@ -137,12 +137,12 @@
   "definitions": {
     "subgraphs": [
       {
-        "id": "69b00ff6-08d6-407d-8083-2897974ee2a1",
+        "id": "372a02a0-a79c-40b4-84a9-34f246fe0e9c",
         "version": 1,
         "state": {
-          "lastGroupId": 4,
-          "lastNodeId": 39,
-          "lastLinkId": 46,
+          "lastGroupId": 8,
+          "lastNodeId": 176,
+          "lastLinkId": 376,
           "lastRerouteId": 0
         },
         "revision": 0,
@@ -271,7 +271,6 @@
             "name": "IMAGE",
             "type": "IMAGE",
             "linkIds": [
-              20,
               20
             ],
             "localized_name": "IMAGE",
@@ -323,13 +322,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "VAELoader",
               "models": [
                 {
@@ -400,13 +399,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "TextEncodeQwenImageEdit"
             },
             "widgets_values": [
@@ -470,13 +469,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "TextEncodeQwenImageEdit"
             },
             "widgets_values": [
@@ -527,13 +526,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "FluxKontextMultiReferenceLatentMethod"
             },
             "widgets_values": [
@@ -583,13 +582,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "FluxGuidance"
             },
             "widgets_values": [
@@ -639,13 +638,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "FluxGuidance"
             },
             "widgets_values": [
@@ -695,13 +694,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "FluxKontextMultiReferenceLatentMethod"
             },
             "widgets_values": [
@@ -814,13 +813,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "KSampler"
             },
             "widgets_values": [
@@ -879,13 +878,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "UNETLoader",
               "models": [
                 {
@@ -940,13 +939,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "VAEEncode"
             }
           },
@@ -990,13 +989,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "VAEDecode"
             }
           },
@@ -1063,13 +1062,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "ImageScaleToTotalPixels"
             },
             "widgets_values": [
@@ -1135,13 +1134,13 @@
               }
             ],
             "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.3.73",
               "ue_properties": {
                 "widget_ue_connectable": {},
                 "version": "7.7",
                 "input_ue_unconnectable": {}
               },
-              "cnr_id": "comfy-core",
-              "ver": "0.3.73",
               "Node name for S&R": "CLIPLoader",
               "models": [
                 {

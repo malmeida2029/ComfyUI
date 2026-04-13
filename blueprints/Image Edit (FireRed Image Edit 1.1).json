@@ -861,7 +861,6 @@
                 "name": "output",
                 "type": "*",
                 "links": [
-                  344,
                   345
                 ]
               }
