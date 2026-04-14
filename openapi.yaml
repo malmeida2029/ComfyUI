@@ -159,6 +159,7 @@ paths:
       operationId: executePrompt
       tags: [prompt]
       summary: Submit a workflow for execution
+      description: Submits a workflow for execution. The server validates the graph, assigns a `prompt_id`, and enqueues it. Clients listen on `/ws` for execution progress and output messages.
       requestBody:
         required: true
         content:
@@ -187,6 +188,7 @@ paths:
       operationId: getQueue
       tags: [queue]
       summary: Get running and pending queue items
+      description: Returns the server's current execution queue, split into the currently-running prompt and the list of pending prompts.
       responses:
         "200":
           description: Queue contents
@@ -198,6 +200,7 @@ paths:
       operationId: manageQueue
       tags: [queue]
       summary: Clear or delete items from the queue
+      description: Mutates the execution queue. Supports clearing all queued prompts or deleting individual prompts by ID.
       requestBody:
         required: true
         content:
@@ -213,6 +216,7 @@ paths:
       operationId: interruptExecution
       tags: [queue]
       summary: Interrupt current execution
+      description: Interrupts the prompt that is currently executing. The next queued prompt (if any) will start immediately after.
       requestBody:
         required: false
         content:
@@ -233,6 +237,7 @@ paths:
       operationId: freeMemory
       tags: [queue]
       summary: Free GPU memory and/or unload models
+      description: Frees GPU memory by unloading models and/or freeing the resident model cache, controlled by the request flags.
       requestBody:
         required: false
         content:
@@ -258,6 +263,7 @@ paths:
       operationId: listJobs
       tags: [queue]
       summary: List jobs with filtering and pagination
+      description: Returns a paginated list of completed prompt executions, newest first.
       parameters:
         - name: status
           in: query
@@ -311,9 +317,11 @@ paths:
       operationId: getJob
       tags: [queue]
       summary: Get a single job by ID
+      description: Returns the full record for a single completed prompt execution, including its outputs, status, and metadata.
       parameters:
         - name: job_id
           in: path
+          description: The job (prompt) ID to fetch.
           required: true
           schema:
             type: string
@@ -400,6 +408,7 @@ paths:
         - $ref: "#/components/parameters/ComfyUserHeader"
         - name: prompt_id
           in: path
+          description: The prompt ID to fetch history for.
           required: true
           schema:
             type: string
@@ -422,6 +431,7 @@ paths:
       operationId: uploadImage
       tags: [upload]
       summary: Upload an image file
+      description: Uploads an image file into one of the input/output/temp directories so it can be referenced by workflow nodes.
       requestBody:
         required: true
         content:
@@ -461,6 +471,7 @@ paths:
       operationId: uploadMask
       tags: [upload]
       summary: Upload a mask image
+      description: Uploads a mask image associated with a previously-uploaded reference image.
       requestBody:
         required: true
         content:
@@ -514,6 +525,7 @@ paths:
       operationId: viewFile
       tags: [view]
       summary: View or download a file
+      description: Serves a file (image, audio, or video) from the input/output/temp directory identified by the query parameters.
       parameters:
         - name: filename
           in: query
@@ -572,6 +584,7 @@ paths:
       operationId: viewMetadata
       tags: [view]
       summary: Get metadata for a file (e.g. safetensors header)
+      description: Returns embedded metadata parsed from a file in the given folder — for example, the header of a safetensors model.
       parameters:
         - name: folder_name
           in: path
@@ -604,6 +617,7 @@ paths:
       operationId: getSystemStats
       tags: [system]
       summary: Get system statistics
+      description: Returns hardware, Python, VRAM, and runtime statistics for the running ComfyUI process.
       responses:
         "200":
           description: System stats
@@ -654,6 +668,7 @@ paths:
       operationId: getObjectInfoByClass
       tags: [node]
       summary: Get a single node definition
+      description: Returns the `NodeInfo` definition for a single registered node class.
       parameters:
         - name: node_class
           in: path
@@ -678,6 +693,7 @@ paths:
       operationId: getEmbeddings
       tags: [node]
       summary: List available embedding names
+      description: Returns the list of text-encoder embeddings available on disk.
       responses:
         "200":
           description: Embedding names
@@ -712,6 +728,7 @@ paths:
       operationId: getModelsByFolder
       tags: [model]
       summary: List model filenames in a folder
+      description: Returns the names of model files in the given folder. This endpoint predates `/api/experiment/models/{folder}` and returns names only — prefer the experiment endpoint for new integrations.
       parameters:
         - name: folder
           in: path
@@ -752,6 +769,7 @@ paths:
       operationId: getExperimentModelsByFolder
       tags: [model]
       summary: List model files with metadata
+      description: Returns the model files in the given folder with richer metadata (path index, mtime, size) than the legacy `/api/models/{folder}` endpoint.
       parameters:
         - name: folder
           in: path
@@ -776,6 +794,7 @@ paths:
       operationId: getModelPreview
       tags: [model]
       summary: Get model preview image
+      description: Returns the preview image associated with a model file, if one exists alongside the model on disk.
       parameters:
         - name: folder
           in: path
@@ -843,6 +862,7 @@ paths:
       operationId: createUser
       tags: [user]
       summary: Create a new user (multi-user mode)
+      description: Creates a new user entry. Only meaningful when ComfyUI is running in multi-user mode.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
       requestBody:
@@ -876,6 +896,7 @@ paths:
       operationId: listUserdata
       tags: [userdata]
       summary: List files in a userdata directory
+      description: Lists files in the authenticated user's data directory. Returns either filename strings or full objects depending on the `full_info` query parameter.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
         - name: dir
@@ -922,6 +943,7 @@ paths:
       operationId: listUserdataV2
       tags: [userdata]
       summary: List files in userdata (v2 format)
+      description: Lists files in the authenticated user's data directory using the v2 response shape, which always returns full objects.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
         - name: path
@@ -957,6 +979,7 @@ paths:
       operationId: getUserdataFile
       tags: [userdata]
       summary: Read a userdata file
+      description: Reads the contents of a file from the authenticated user's data directory.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
         - name: file
@@ -979,6 +1002,7 @@ paths:
       operationId: writeUserdataFile
       tags: [userdata]
       summary: Write or create a userdata file
+      description: Writes (creates or replaces) a file in the authenticated user's data directory.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
         - name: file
@@ -1019,6 +1043,7 @@ paths:
       operationId: deleteUserdataFile
       tags: [userdata]
       summary: Delete a userdata file
+      description: Deletes a file from the authenticated user's data directory.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
         - name: file
@@ -1038,6 +1063,7 @@ paths:
       operationId: moveUserdataFile
       tags: [userdata]
       summary: Move or rename a userdata file
+      description: Renames or moves a file within the authenticated user's data directory.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
         - name: file
@@ -1082,6 +1108,7 @@ paths:
       operationId: getSettings
       tags: [settings]
       summary: Get all user settings
+      description: Returns all settings for the authenticated user.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
       responses:
@@ -1096,6 +1123,7 @@ paths:
       operationId: updateSettings
       tags: [settings]
       summary: Update user settings (partial merge)
+      description: Replaces the authenticated user's settings with the provided object.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
       requestBody:
@@ -1115,6 +1143,7 @@ paths:
       operationId: getSetting
       tags: [settings]
       summary: Get a single setting by key
+      description: Returns the value of a single setting, identified by key.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
         - name: id
@@ -1135,6 +1164,7 @@ paths:
       operationId: updateSetting
       tags: [settings]
       summary: Set a single setting value
+      description: Sets the value of a single setting, identified by key.
       parameters:
         - $ref: "#/components/parameters/ComfyUserHeader"
         - name: id
@@ -1161,6 +1191,7 @@ paths:
       operationId: getExtensions
       tags: [extensions]
       summary: List frontend extension JS file paths
+      description: Returns the list of frontend extension JS URLs registered by custom nodes, to be loaded by the frontend on startup.
       responses:
         "200":
           description: Array of JS file paths
@@ -1196,6 +1227,7 @@ paths:
       operationId: getI18n
       tags: [extensions]
       summary: Get internationalisation translation strings
+      description: Returns the URLs of translation files contributed by custom nodes, keyed by locale.
       responses:
         "200":
           description: Translation map
@@ -1230,6 +1262,7 @@ paths:
       operationId: getGlobalSubgraph
       tags: [subgraph]
       summary: Get a global subgraph with full data
+      description: Returns the blueprint for a globally-registered subgraph, used by the frontend to materialize the subgraph node.
       parameters:
         - name: id
           in: path
@@ -1275,6 +1308,7 @@ paths:
       operationId: getInternalLogs
       tags: [internal]
       summary: Get server logs as text
+      description: Returns structured ComfyUI log entries from the in-memory log buffer.
       x-internal: true
       responses:
         "200":
@@ -1289,6 +1323,7 @@ paths:
       operationId: getInternalLogsRaw
       tags: [internal]
       summary: Get raw structured log entries
+      description: Returns the raw ComfyUI log buffer as text, together with metadata about the current size limit.
       x-internal: true
       responses:
         "200":
@@ -1322,6 +1357,7 @@ paths:
       operationId: subscribeToLogs
       tags: [internal]
       summary: Subscribe or unsubscribe a WebSocket client to log streaming
+      description: Subscribes or unsubscribes the current client from live log streaming over the WebSocket.
       x-internal: true
       requestBody:
         required: true
@@ -1348,6 +1384,7 @@ paths:
       operationId: getInternalFolderPaths
       tags: [internal]
       summary: Get configured folder paths
+      description: Returns the filesystem paths ComfyUI is configured to load models and other assets from, keyed by folder type.
       x-internal: true
       responses:
         "200":
@@ -1369,6 +1406,7 @@ paths:
       operationId: getInternalFiles
       tags: [internal]
       summary: List files in a directory type
+      description: Lists the files present in one of ComfyUI's known directories (input, output, or temp).
       x-internal: true
       parameters:
         - name: directory_type
@@ -1395,6 +1433,7 @@ paths:
       operationId: checkAssetByHash
       tags: [assets]
       summary: Check if an asset with the given hash exists
+      description: Returns 204 if an asset with the given content hash already exists, 404 otherwise. Used by clients to deduplicate uploads before transferring bytes.
       x-feature-gate: enable-assets
       parameters:
         - name: hash
@@ -1414,6 +1453,7 @@ paths:
       operationId: listAssets
       tags: [assets]
       summary: List assets with filtering and pagination
+      description: Returns a paginated list of assets, optionally filtered by tags, name, or other query parameters.
       x-feature-gate: enable-assets
       parameters:
         - name: limit
@@ -1476,6 +1516,7 @@ paths:
       operationId: createAsset
       tags: [assets]
       summary: Upload a new asset
+      description: Uploads a new asset (binary content plus metadata) and registers it in the asset database.
       x-feature-gate: enable-assets
       requestBody:
         required: true
@@ -1522,6 +1563,7 @@ paths:
       operationId: createAssetFromHash
       tags: [assets]
       summary: Create an asset reference from an existing hash
+      description: Registers a new asset that references existing content by hash, without re-uploading the bytes.
       x-feature-gate: enable-assets
       requestBody:
         required: true
@@ -1559,10 +1601,12 @@ paths:
       operationId: getAsset
       tags: [assets]
       summary: Get asset metadata
+      description: Returns the metadata for a single asset.
       x-feature-gate: enable-assets
       parameters:
         - name: id
           in: path
+          description: The asset ID.
           required: true
           schema:
             type: string
@@ -1580,10 +1624,12 @@ paths:
       operationId: updateAsset
       tags: [assets]
       summary: Update asset metadata
+      description: Updates the mutable metadata of an asset (name, tags, etc.). Binary content is immutable.
       x-feature-gate: enable-assets
       parameters:
         - name: id
           in: path
+          description: The asset ID.
           required: true
           schema:
             type: string
@@ -1617,10 +1663,12 @@ paths:
       operationId: deleteAsset
       tags: [assets]
       summary: Delete an asset
+      description: Removes an asset entry. Depending on the server configuration, the underlying content may also be deleted.
       x-feature-gate: enable-assets
       parameters:
         - name: id
           in: path
+          description: The asset ID.
           required: true
           schema:
             type: string
@@ -1639,10 +1687,12 @@ paths:
       operationId: getAssetContent
       tags: [assets]
       summary: Download asset file content
+      description: Returns the binary content of an asset. Supports range requests.
       x-feature-gate: enable-assets
       parameters:
         - name: id
           in: path
+          description: The asset ID.
           required: true
           schema:
             type: string
@@ -1663,10 +1713,12 @@ paths:
       operationId: addAssetTags
       tags: [assets]
       summary: Add tags to an asset
+      description: Adds one or more tags to an asset.
       x-feature-gate: enable-assets
       parameters:
         - name: id
           in: path
+          description: The asset ID.
           required: true
           schema:
             type: string
@@ -1695,10 +1747,12 @@ paths:
       operationId: removeAssetTags
       tags: [assets]
       summary: Remove tags from an asset
+      description: Removes one or more tags from an asset.
       x-feature-gate: enable-assets
       parameters:
         - name: id
           in: path
+          description: The asset ID.
           required: true
           schema:
             type: string
@@ -1729,6 +1783,7 @@ paths:
       operationId: listTags
       tags: [assets]
       summary: List all known tags with counts
+      description: Returns the list of all tags known to the asset database, with counts.
       x-feature-gate: enable-assets
       parameters:
         - name: limit
@@ -1757,6 +1812,7 @@ paths:
       operationId: refineAssetTags
       tags: [assets]
       summary: Get tag counts for assets matching current filters
+      description: Returns suggested additional tags that would refine a filtered asset query, together with the count of assets each tag would select.
       x-feature-gate: enable-assets
       parameters:
         - name: include_tags
@@ -1819,6 +1875,7 @@ paths:
       operationId: seedAssets
       tags: [assets]
       summary: Trigger asset scan/seed from filesystem
+      description: Starts a background job that scans the configured directories and registers any assets not yet present in the asset database.
       x-feature-gate: enable-assets
       requestBody:
         required: false
@@ -1848,6 +1905,7 @@ paths:
       operationId: getAssetSeedStatus
       tags: [assets]
       summary: Get asset scan progress
+      description: Returns the progress and status of the most recently-started asset seed job.
       x-feature-gate: enable-assets
       responses:
         "200":
@@ -1864,6 +1922,7 @@ paths:
       operationId: cancelAssetSeed
       tags: [assets]
       summary: Cancel an in-progress asset scan
+      description: Requests cancellation of the currently-running asset seed job.
       x-feature-gate: enable-assets
       responses:
         "200":
@@ -1881,6 +1940,7 @@ paths:
       operationId: pruneAssets
       tags: [assets]
       summary: Mark assets whose backing files no longer exist on disk
+      description: Starts a background job that removes asset entries whose underlying content no longer exists on disk.
       x-feature-gate: enable-assets
       responses:
         "200":
@@ -1915,6 +1975,7 @@ components:
     # -------------------------------------------------------------------
     PromptRequest:
       type: object
+      description: A workflow submission. Wraps the prompt graph plus optional client identifier and extra per-request data.
       required:
         - prompt
       properties:
@@ -1949,6 +2010,7 @@ components:
 
     PromptResponse:
       type: object
+      description: Server acknowledgement of a workflow submission. Includes the assigned `prompt_id` and current queue position.
       properties:
         prompt_id:
           type: string
@@ -2018,6 +2080,7 @@ components:
 
     PromptInfo:
       type: object
+      description: Summary of a queued or recently-executed prompt, as returned by the queue and history endpoints.
       properties:
         exec_info:
           type: object
@@ -2245,6 +2308,7 @@ components:
 
     PaginationInfo:
       type: object
+      description: Pagination metadata returned alongside list responses.
       properties:
         offset:
           type: integer
@@ -2260,6 +2324,7 @@ components:
     # -------------------------------------------------------------------
     UploadResult:
       type: object
+      description: Response body returned by the image/mask upload endpoints, describing where the uploaded file now lives.
       properties:
         name:
           type: string
@@ -2306,6 +2371,7 @@ components:
 
     SystemStatsResponse:
       type: object
+      description: Hardware, VRAM, Python, and ComfyUI version information for the running process.
       required:
         - system
         - devices
@@ -2369,6 +2435,7 @@ components:
     # -------------------------------------------------------------------
     NodeInfo:
       type: object
+      description: 'Definition of a registered node class: its inputs, outputs, category, and display metadata.'
       properties:
         input:
           type: object
@@ -2451,6 +2518,7 @@ components:
     # -------------------------------------------------------------------
     ModelFolder:
       type: object
+      description: A configured model folder and the list of disk paths it resolves to.
       required:
         - name
         - folders
@@ -2466,6 +2534,7 @@ components:
 
     ModelFile:
       type: object
+      description: A single model file in a folder, with filesystem metadata.
       required:
         - name
         - pathIndex
@@ -2549,12 +2618,14 @@ components:
     # Userdata
     # -------------------------------------------------------------------
     UserDataResponse:
+      description: Response body for `/api/userdata` — either a list of filenames or a list of full file objects, depending on the `full_info` query parameter.
       oneOf:
         - $ref: "#/components/schemas/UserDataResponseFull"
         - $ref: "#/components/schemas/UserDataResponseShort"
 
     UserDataResponseFull:
       type: object
+      description: List of files in the authenticated user's data directory, as full file objects with metadata.
       properties:
         path:
           type: string
@@ -2571,8 +2642,10 @@ components:
     UserDataResponseShort:
       type: string
 
+      description: List of files in the authenticated user's data directory, as filename strings only.
     GetUserDataResponseFullFile:
       type: object
+      description: A single entry in a full-info user data listing.
       properties:
         path:
           type: string
@@ -2593,6 +2666,7 @@ components:
     # -------------------------------------------------------------------
     Asset:
       type: object
+      description: A registered asset — an input/output file tracked in the asset database with content hash and metadata.
       required:
         - id
         - name
@@ -2658,6 +2732,7 @@ components:
           description: Whether this asset is immutable
 
     AssetCreated:
+      description: Response body returned after successfully registering a new asset.
       allOf:
         - $ref: "#/components/schemas/Asset"
         - type: object
@@ -2670,6 +2745,7 @@ components:
 
     AssetUpdated:
       type: object
+      description: Response body returned after updating an asset's metadata.
       required:
         - id
         - updated_at
@@ -2697,6 +2773,7 @@ components:
 
     ListAssetsResponse:
       type: object
+      description: Paginated list of assets.
       required:
         - assets
         - total
@@ -2713,6 +2790,7 @@ components:
 
     TagInfo:
       type: object
+      description: A tag known to the asset database, with the number of assets bearing it.
       required:
         - name
         - count
@@ -2724,6 +2802,7 @@ components:
 
     ListTagsResponse:
       type: object
+      description: Flat list of all tags, with counts.
       required:
         - tags
         - total
@@ -2740,6 +2819,7 @@ components:
 
     AssetTagHistogramResponse:
       type: object
+      description: Tags that would refine a filtered asset query, with the count of assets each tag would additionally select.
       required:
         - tag_counts
       properties:
@@ -2751,6 +2831,7 @@ components:
 
     TagsModificationResponse:
       type: object
+      description: Response body returned after adding or removing tags on an asset.
       required:
         - total_tags
       properties:
@@ -2827,27 +2908,6 @@ components:
                 type: string
       additionalProperties: true
 
-    TaskOutput:
-      type: object
-      description: Outputs from a full task, keyed by node ID
-      additionalProperties:
-        $ref: "#/components/schemas/NodeOutputs"
-
-    # -------------------------------------------------------------------
-    # REST response types
-    # -------------------------------------------------------------------
-    EmbeddingsResponse:
-      type: array
-      description: List of available embedding names
-      items:
-        type: string
-
-    ExtensionsResponse:
-      type: array
-      description: List of frontend extension JS file URLs
-      items:
-        type: string
-
     TerminalSize:
       type: object
       description: Terminal dimensions
@@ -2868,53 +2928,9 @@ components:
           type: string
           description: Log message
 
-    LogRawResponse:
-      type: object
-      description: Response from /api/logs/raw
-      properties:
-        size:
-          $ref: "#/components/schemas/TerminalSize"
-        entries:
-          type: array
-          items:
-            $ref: "#/components/schemas/LogEntry"
-
-    UserInfo:
-      type: object
-      description: User mode and storage information
-      properties:
-        storage:
-          type: string
-          enum: [server]
-        migrated:
-          type: boolean
-          description: Only present in single-user mode
-        users:
-          type: object
-          description: Only present in multi-user mode — map of user ID to username
-          additionalProperties:
-            type: string
-
-    UserDataFullInfo:
-      type: object
-      description: Full metadata for a userdata file
-      properties:
-        path:
-          type: string
-        size:
-          type: number
-        modified:
-          type: number
-          description: Unix timestamp of last modification
-        created:
-          type: number
-          description: Unix timestamp of file creation
-
-    # -------------------------------------------------------------------
-    # WebSocket message schemas
-    # -------------------------------------------------------------------
     StatusWsMessageStatus:
       type: object
+      description: Inner payload of a `status` WebSocket message, describing the execution queue state.
       properties:
         exec_info:
           type: object
