@@ -1,0 +1,9 @@
+{
+    "Comfy.RightSidePanel.IsOpen": false,
+    "Comfy.Minimap.Visible": false,
+    "Comfy.Queue.History.Expanded": false,
+    "Comfy.WorkflowActions.SeenItems": [
+        "enter-app-mode",
+        "enter-builder-mode"
+    ]
+}
