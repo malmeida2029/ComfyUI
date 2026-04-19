@@ -20860,6 +20860,16 @@
             "title": "ComfyUI-INT8-Fast-Fork"
         },
         {
+            "author": "sparknight",
+            "description": "Workflow-local enumerated values for ComfyUI.",
+            "files": [
+                "https://github.com/SparknightLLC/ComfyUI-EnumCombo"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/SparknightLLC/ComfyUI-EnumCombo",
+            "title": "ComfyUI-EnumCombo"
+        },
+        {
             "author": "lightricks",
             "description": "Custom nodes for LTX-Video support in ComfyUI",
             "files": [
@@ -22995,6 +23005,16 @@
             "install_type": "git-clone",
             "reference": "https://github.com/facok/comfyui-meancache-z",
             "title": "comfyui-meancache-z"
+        },
+        {
+            "author": "facok",
+            "description": "Restore composition diversity for distilled diffusion models. Training-free frequency-domain phase injection.",
+            "files": [
+                "https://github.com/facok/ComfyUI-DiversityBoost"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/facok/ComfyUI-DiversityBoost",
+            "title": "comfyui-diversityboost"
         },
         {
             "author": "FinetunersAI",
@@ -44840,6 +44860,16 @@
             "title": "ComfyUI-DN_PatchFlashAttention"
         },
         {
+            "author": "deluxa",
+            "description": "A ComfyUI custom node that patches the attention mechanism inside a VAE's encoder and decoder to use a specific implementation, regardless of what ComfyUI auto-selected at startup.",
+            "files": [
+                "https://github.com/0xDELUXA/ComfyUI-DN_PatchVAEAttention"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/0xDELUXA/ComfyUI-DN_PatchVAEAttention",
+            "title": "ComfyUI-DN_PatchVAEAttention"
+        },
+        {
             "author": "fabwaseem",
             "description": "This is a powerful custom node for ComfyUI that brings the full Civitai browsing experience directly into your workflow.",
             "files": [
@@ -46186,6 +46216,59 @@
             "install_type": "git-clone",
             "reference": "https://github.com/knottttt/comfyui-tinyPNG",
             "title": "ComfyUI TinyPNG"
+        },
+        {
+            "author": "vladgohn",
+            "description": "Tiny ComfyUI styling utility for fast node and group coloring with emoji labels for nodes.",
+            "files": [
+                "https://github.com/vladgohn/ComfyUI-MurMur"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/vladgohn/ComfyUI-MurMur",
+            "title": "\ud83e\udd84 MurMur"
+        },
+        {
+            "author": "OvertliDS",
+            "category": "Model/LLM",
+            "description": "Windows-first advanced suite for Pollinations, LM Studio, Copilot CLI, and OpenAI-compatible multi-engine workflows.",
+            "files": [
+                "https://github.com/OvertliDS/overtli-studio-suite"
+            ],
+            "id": "overtli-studio-suite",
+            "install_type": "git-clone",
+            "reference": "https://github.com/OvertliDS/overtli-studio-suite",
+            "title": "Overtli Studio Suite"
+        },
+        {
+            "author": "yawiii",
+            "description": "A versatile prompt utility featuring translation, refinement, expansion, and image/video-to-prompt reverse engineering with one-click access to any online or local LLM.",
+            "files": [
+                "https://github.com/yawiii/ComfyUI-Prompt-Assistant"
+            ],
+            "id": "prompt-assistant",
+            "install_type": "git-clone",
+            "reference": "https://github.com/yawiii/ComfyUI-Prompt-Assistant",
+            "title": "Prompt Assistant"
+        },
+        {
+            "author": "Mayo",
+            "description": "Mayo's Custom Nodes, including Aspect Ratio Randomizer and Custom Dropdown",
+            "files": [
+                "https://github.com/Pasu2k/comfyui-mayo-nodes"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/Pasu2k/comfyui-mayo-nodes",
+            "title": "Mayo Nodes"
+        },
+        {
+            "author": "andreszs",
+            "description": "Area-based LoRA and conditioning workflow tools for ComfyUI with multi-region control.",
+            "files": [
+                "https://github.com/andreszs/ComfyUI-Lora-Pipeline"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/andreszs/ComfyUI-Lora-Pipeline",
+            "title": "ComfyUI-Lora-Pipeline"
         },
         {
             "author": "Ser-Hilary",
